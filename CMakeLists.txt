@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.16)
 project(mcl_ip LANGUAGES C)
 
 option(MCL_IP_BUILD_TESTS "Build host-side reference tests" ON)
+option(MCL_IP_BUILD_TOOLS "Build host tools that require real hardware" OFF)
+
+set(MCL_WIRE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../mcl-wire" CACHE PATH "Path to mcl-wire repository")
 
 set(MCL_LINK_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../mcl-link" CACHE PATH "Path to mcl-link repository")
 
@@ -34,4 +37,28 @@ if(MCL_IP_BUILD_TESTS)
         C_STANDARD_REQUIRED YES
         C_EXTENSIONS NO)
     add_test(NAME mcl_ip_binding COMMAND mcl_ip_test_binding)
+endif()
+
+# The over-air peer needs a radio, a network and a second machine, so it is a
+# tool rather than a test and is off by default. It carries no protocol logic
+# of its own: every frame it sends is built by mcl-link and every reply it
+# accepts is checked by mcl-ip, so what runs over the air is what ships.
+if(MCL_IP_BUILD_TOOLS)
+    if(NOT EXISTS "${MCL_WIRE_DIR}/include/mcl/wire.h")
+        message(FATAL_ERROR
+            "MCL_IP_BUILD_TOOLS requires mcl-wire. Set MCL_WIRE_DIR to the mcl-wire checkout.")
+    endif()
+
+    add_executable(mcl_ip_udp_over_air_peer
+        tools/udp_over_air_peer.c
+        "${MCL_WIRE_DIR}/src/wire.c")
+    target_link_libraries(mcl_ip_udp_over_air_peer PRIVATE mcl_ip)
+    target_include_directories(mcl_ip_udp_over_air_peer PRIVATE "${MCL_WIRE_DIR}/include")
+    set_target_properties(mcl_ip_udp_over_air_peer PROPERTIES
+        C_STANDARD 99
+        C_STANDARD_REQUIRED YES
+        C_EXTENSIONS NO)
+    if(WIN32)
+        target_link_libraries(mcl_ip_udp_over_air_peer PRIVATE ws2_32)
+    endif()
 endif()

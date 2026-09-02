@@ -1,0 +1,7 @@
+# Firmware build tree. The sketch stages the canonical protocol sources into it
+# at build time and deletes them afterwards; nothing here is a source of record.
+hardware/esp32-udp-peer/build/
+
+# CMake build trees
+build/
+out/

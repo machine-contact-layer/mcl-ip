@@ -1,0 +1,19 @@
+MCL-IP over-air peer
+====================
+peer=192.168.4.1:5555 bind=192.168.4.2 frame_max=1048
+
+  [+] valid CONTACT carrying PRESENCE
+  [+] valid DATA carrying HAZARD at P0
+  [+] KEEPALIVE with no payload
+  [-] truncated: last byte removed
+  [-] trailing byte after a complete frame
+  [-] unknown frame class
+  [-] reserved flag bit set
+  [-] future Link major version
+  [-] integrity field corrupted by one bit
+  [-] payload corrupted by one bit under a valid CRC field
+  [-] declared payload length exceeds the datagram
+  [=] sustained exchange of 100 frames
+      acked=100 lost=0 of 100
+
+28 checks, 0 failed, 0 datagram retries
