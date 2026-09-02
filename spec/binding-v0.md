@@ -78,11 +78,23 @@ lets a receiver skip a frame it cannot decode without losing stream
 synchronisation, which is the difference between dropping one frame and dropping
 the connection. A zero-length record is a framing error, not an empty frame.
 
+The prefix can express 65535, but no legal Link frame exceeds 1048 bytes. A
+declared length above that means the stream is already desynchronised, and it
+MUST be reported as a framing error rather than as truncation. Reporting
+truncation would tell the receiver to wait for bytes that will never arrive, and
+to buffer up to 64 KiB while waiting.
+
 ## MTU
 
 Datagram mode subtracts the IP and UDP headers from the path MTU: 28 bytes for
 IPv4, 48 for IPv6. An MTU that cannot carry a minimum Link frame carries
 nothing, and the binding says so rather than silently truncating.
+
+Two limits apply and the smaller wins. Below roughly 1 KiB the path constrains
+the frame; above it the protocol does, because no legal Link frame exceeds 1048
+bytes. A large MTU therefore does not raise the usable frame size, and a caller
+that sized a buffer from a jumbo MTU would be sizing it for a frame that could
+never be encoded.
 
 ## Handoff
 

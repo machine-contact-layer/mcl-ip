@@ -181,7 +181,15 @@ mcl_ip_status_t mcl_ip_stream_next(
 
 /*
  * Largest Link frame that fits a given path MTU in datagram mode, after IP and
- * UDP headers. Returns 0 when the MTU cannot carry a minimal frame.
+ * UDP headers.
+ *
+ * Two limits apply and the smaller wins. Below roughly 1 KiB the path is the
+ * constraint; above it the protocol is, because no legal Link frame exceeds
+ * MCL_LINK_FRAME_MAX_SIZE. A large MTU therefore does not raise the answer, and
+ * a caller that sized a buffer from a jumbo MTU would be sizing it for a frame
+ * that could never be encoded.
+ *
+ * Returns 0 when the MTU cannot carry even a minimal frame.
  */
 size_t mcl_ip_max_frame_for_mtu(
     mcl_ip_address_family_t family,

@@ -208,8 +208,24 @@ static void test_datagram_boundary_is_frame_boundary(void)
     CHECK(mcl_ip_datagram_validate(padded, frame_size + 1u) == MCL_IP_ERR_NONCANONICAL,
           "trailing byte rejected, never ignored");
 
-    CHECK(mcl_ip_datagram_validate(frame, frame_size - 1u) != MCL_IP_OK,
-          "truncated datagram rejected");
+    CHECK(mcl_ip_datagram_validate(frame, frame_size - 1u) == MCL_IP_ERR_TRUNCATED,
+          "a short datagram reports truncation");
+
+    /*
+     * A datagram that is complete but carries a class this version does not
+     * define must not be reported as truncated. On a datagram transport there
+     * is no "wait for more bytes", so a truncation report would be a lie the
+     * caller cannot act on.
+     */
+    memcpy(padded, frame, frame_size);
+    padded[0] = (uint8_t)((padded[0] & 0xF0u) | 0x0Fu);
+    CHECK(mcl_ip_datagram_validate(padded, frame_size) == MCL_IP_ERR_NONCANONICAL,
+          "unknown frame class is non-canonical, not truncated");
+
+    memcpy(padded, frame, frame_size);
+    padded[0] = (uint8_t)((1u << 4u) | (padded[0] & 0x0Fu));
+    CHECK(mcl_ip_datagram_validate(padded, frame_size) == MCL_IP_ERR_UNSUPPORTED,
+          "a future Link major version is reported as unsupported");
     CHECK(mcl_ip_datagram_validate(NULL, frame_size) == MCL_IP_ERR_INVALID_ARGUMENT,
           "null datagram rejected");
 }
@@ -323,10 +339,33 @@ static void test_mtu(void)
 {
     printf("[TEST] MTU accounting\n");
 
-    CHECK(mcl_ip_max_frame_for_mtu(MCL_IP_AF_IPV4, 1500u) == 1500u - 28u,
+    /*
+     * Below the protocol ceiling the path is what limits the frame, so the
+     * header overhead must be subtracted exactly.
+     */
+    CHECK(mcl_ip_max_frame_for_mtu(MCL_IP_AF_IPV4, 1000u) == 1000u - 28u,
           "IPv4 subtracts IP and UDP headers");
-    CHECK(mcl_ip_max_frame_for_mtu(MCL_IP_AF_IPV6, 1500u) == 1500u - 48u,
+    CHECK(mcl_ip_max_frame_for_mtu(MCL_IP_AF_IPV6, 1000u) == 1000u - 48u,
           "IPv6 subtracts IP and UDP headers");
+
+    /*
+     * Above it the protocol is the limit. A path that could carry more does
+     * not make a larger frame legal, and reporting the MTU-derived number here
+     * would invite a caller to size a buffer for a frame Link would refuse to
+     * encode.
+     */
+    CHECK(mcl_ip_max_frame_for_mtu(MCL_IP_AF_IPV4, 1500u) == MCL_LINK_FRAME_MAX_SIZE,
+          "a 1500 byte path is bounded by the protocol, not the path");
+    CHECK(mcl_ip_max_frame_for_mtu(MCL_IP_AF_IPV6, 9000u) == MCL_LINK_FRAME_MAX_SIZE,
+          "a jumbo path does not raise the maximum frame");
+
+    /* The exact crossover: 1048 + 28 bytes of IPv4/UDP overhead. */
+    CHECK(mcl_ip_max_frame_for_mtu(MCL_IP_AF_IPV4, MCL_LINK_FRAME_MAX_SIZE + 28u)
+              == MCL_LINK_FRAME_MAX_SIZE,
+          "the two limits meet exactly at the crossover MTU");
+    CHECK(mcl_ip_max_frame_for_mtu(MCL_IP_AF_IPV4, MCL_LINK_FRAME_MAX_SIZE + 27u)
+              == MCL_LINK_FRAME_MAX_SIZE - 1u,
+          "one byte below the crossover the path limits again");
     CHECK(mcl_ip_max_frame_for_mtu(MCL_IP_AF_IPV4, 20u) == 0u,
           "MTU below overhead carries nothing");
     CHECK(mcl_ip_max_frame_for_mtu(MCL_IP_AF_IPV4, 30u) == 0u,

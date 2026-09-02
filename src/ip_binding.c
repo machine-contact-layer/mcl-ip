@@ -169,6 +169,30 @@ mcl_ip_status_t mcl_ip_endpoint_decode(
     return MCL_IP_OK;
 }
 
+/*
+ * Translate a Link decode failure into this binding's vocabulary.
+ *
+ * The distinction that matters to a caller is whether more bytes could help.
+ * Truncation says yes; every other failure says these bytes are not a frame
+ * and never will be. An incompatible major version is reported separately
+ * because it is a statement about the peer, not about the bytes: local policy
+ * may want to react to it rather than simply drop.
+ */
+static mcl_ip_status_t mcl_ip_translate_link_status(mcl_link_status_t st)
+{
+    switch (st) {
+    case MCL_LINK_ERR_TRUNCATED:
+        return MCL_IP_ERR_TRUNCATED;
+    case MCL_LINK_ERR_INCOMPATIBLE_VERSION:
+        return MCL_IP_ERR_UNSUPPORTED;
+    case MCL_LINK_ERR_INVALID_ARGUMENT:
+        return MCL_IP_ERR_INVALID_ARGUMENT;
+    default:
+        /* Unknown class, reserved bits set, oversize payload, failed integrity. */
+        return MCL_IP_ERR_NONCANONICAL;
+    }
+}
+
 mcl_ip_status_t mcl_ip_datagram_validate(
     const uint8_t *datagram,
     size_t datagram_size)
@@ -183,7 +207,7 @@ mcl_ip_status_t mcl_ip_datagram_validate(
 
     st = mcl_link_frame_decode(datagram, datagram_size, &frame, &consumed);
     if (st != MCL_LINK_OK) {
-        return (st == MCL_LINK_ERR_RANGE) ? MCL_IP_ERR_TRUNCATED : MCL_IP_ERR_RANGE;
+        return mcl_ip_translate_link_status(st);
     }
     if (consumed != datagram_size) {
         /* A datagram boundary is a frame boundary. Trailing bytes are not ours. */
@@ -203,7 +227,10 @@ mcl_ip_status_t mcl_ip_stream_wrap(
     if (frame == NULL || out == NULL || written == NULL) {
         return MCL_IP_ERR_INVALID_ARGUMENT;
     }
-    if (frame_size == 0u || frame_size > 0xFFFFu) {
+    if (frame_size == 0u || frame_size > (size_t)MCL_LINK_FRAME_MAX_SIZE) {
+        /* The prefix could express 65535, but no legal Link frame is that
+         * large. Bounding it here keeps a reader from being told to expect
+         * bytes that could never form a frame. */
         return MCL_IP_ERR_RANGE;
     }
     if (out_capacity < (size_t)MCL_IP_STREAM_PREFIX_SIZE + frame_size) {
@@ -240,6 +267,15 @@ mcl_ip_status_t mcl_ip_stream_next(
          * useful; treat it as a framing error rather than an empty frame. */
         return MCL_IP_ERR_NONCANONICAL;
     }
+    if (declared > (size_t)MCL_LINK_FRAME_MAX_SIZE) {
+        /*
+         * A length no legal frame could have means the stream is already
+         * desynchronised. Reporting it as non-canonical rather than truncated
+         * matters: truncated would tell the caller to wait for bytes that are
+         * never going to arrive, and to buffer up to 64 KiB while waiting.
+         */
+        return MCL_IP_ERR_NONCANONICAL;
+    }
     if (in_size < (size_t)MCL_IP_STREAM_PREFIX_SIZE + declared) {
         return MCL_IP_ERR_TRUNCATED;
     }
@@ -272,6 +308,10 @@ size_t mcl_ip_max_frame_for_mtu(
     }
     if (path_mtu - overhead < (size_t)MCL_LINK_FRAME_MIN_SIZE) {
         return 0u;
+    }
+    if (path_mtu - overhead > (size_t)MCL_LINK_FRAME_MAX_SIZE) {
+        /* A large MTU does not make a larger frame legal. */
+        return (size_t)MCL_LINK_FRAME_MAX_SIZE;
     }
 
     return path_mtu - overhead;
