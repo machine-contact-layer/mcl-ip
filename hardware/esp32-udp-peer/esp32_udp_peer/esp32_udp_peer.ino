@@ -109,7 +109,7 @@ static void send_reply(const IPAddress &to, uint16_t port,
 
     memset(&f, 0, sizeof(f));
     f.frame_class = cls;
-    f.flags = MCL_LINK_FLAG_DESTINATION | MCL_LINK_FLAG_SEQUENCE | MCL_LINK_FLAG_INTEGRITY;
+    f.flags = MCL_LINK_FLAG_DESTINATION | MCL_LINK_FLAG_SEQUENCE | MCL_LINK_FLAG_FRAME_CHECK;
     f.source_ref = kBoardSourceRef;
     f.destination_ref = destination_ref;
     f.sequence = g_tx_sequence;

@@ -224,7 +224,7 @@ static void case_valid_contact(link_t *l)
     printf("  [+] valid CONTACT carrying PRESENCE\n");
     make_presence(&obj);
     tx_len = build_frame(tx, sizeof(tx), MCL_LINK_CLASS_CONTACT,
-                         MCL_LINK_FLAG_SEQUENCE | MCL_LINK_FLAG_INTEGRITY, 1u, &obj);
+                         MCL_LINK_FLAG_SEQUENCE | MCL_LINK_FLAG_FRAME_CHECK, 1u, &obj);
     CHECK(tx_len > 0u, "frame built");
 
     n = exchange(l, tx, tx_len, rx, sizeof(rx));
@@ -252,7 +252,7 @@ static void case_valid_hazard(link_t *l)
     printf("  [+] valid DATA carrying HAZARD at P0\n");
     make_hazard(&obj);
     tx_len = build_frame(tx, sizeof(tx), MCL_LINK_CLASS_DATA,
-                         MCL_LINK_FLAG_SEQUENCE | MCL_LINK_FLAG_INTEGRITY, 2u, &obj);
+                         MCL_LINK_FLAG_SEQUENCE | MCL_LINK_FLAG_FRAME_CHECK, 2u, &obj);
     CHECK(tx_len > 0u, "frame built");
     n = exchange(l, tx, tx_len, rx, sizeof(rx));
     CHECK(reply_is(rx, n, MCL_LINK_CLASS_ACK, &reply), "reply is a valid ACK");
@@ -300,7 +300,7 @@ static void case_negatives(link_t *l)
 
     make_presence(&obj);
     base_len = build_frame(base, sizeof(base), MCL_LINK_CLASS_CONTACT,
-                           MCL_LINK_FLAG_SEQUENCE | MCL_LINK_FLAG_INTEGRITY, 3u, &obj);
+                           MCL_LINK_FLAG_SEQUENCE | MCL_LINK_FLAG_FRAME_CHECK, 3u, &obj);
     if (base_len == 0u) {
         printf("  cannot build the base frame for negative cases\n");
         ++checks_failed;
@@ -356,7 +356,7 @@ static void case_sustained(link_t *l, int count)
     for (i = 0; i < count; ++i) {
         int n;
         tx_len = build_frame(tx, sizeof(tx), MCL_LINK_CLASS_CONTACT,
-                             MCL_LINK_FLAG_SEQUENCE | MCL_LINK_FLAG_INTEGRITY,
+                             MCL_LINK_FLAG_SEQUENCE | MCL_LINK_FLAG_FRAME_CHECK,
                              (uint16_t)(100 + i), &obj);
         if (tx_len == 0u) { ++lost; continue; }
         n = exchange(l, tx, tx_len, rx, sizeof(rx));

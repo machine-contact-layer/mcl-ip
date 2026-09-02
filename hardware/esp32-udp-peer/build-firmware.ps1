@@ -80,8 +80,15 @@ $outDir = Join-Path $scriptDir 'build\out'
 New-Item -ItemType Directory -Force -Path $outDir | Out-Null
 
 Write-Host "Compiling for $fqbn" -ForegroundColor Cyan
+# Windows PowerShell turns any stderr output from a native command into a
+# NativeCommandError while ErrorActionPreference is Stop, so a compiler warning
+# would abort a build that actually succeeded. The exit code is the authority.
+$previousPreference = $ErrorActionPreference
+$ErrorActionPreference = 'Continue'
 & $ArduinoCli compile --fqbn $fqbn --output-dir $outDir --warnings default $staging
-if ($LASTEXITCODE -ne 0) { throw "arduino-cli compile failed with exit code $LASTEXITCODE" }
+$compileExit = $LASTEXITCODE
+$ErrorActionPreference = $previousPreference
+if ($compileExit -ne 0) { throw "arduino-cli compile failed with exit code $compileExit" }
 
 $bin = Join-Path $outDir 'esp32_udp_peer.ino.bin'
 if (-not (Test-Path -LiteralPath $bin -PathType Leaf)) { throw "Expected application image not produced: $bin" }

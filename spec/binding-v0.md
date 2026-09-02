@@ -60,8 +60,10 @@ Trailing bytes are rejected, because on a message-oriented transport they
 indicate a malformed or concatenated datagram, and ignoring them is how framing
 confusion becomes semantic confusion.
 
-UDP and QUIC datagrams already detect corruption, so the Link frame's integrity
-field is permitted but not required in this mode.
+UDP and QUIC datagrams already carry a checksum, so the Link frame's
+`frame_check` is permitted but not required in this mode. Neither the UDP
+checksum nor the Link frame check is a security mechanism, and an
+attacker-modified datagram passes both.
 
 ### Stream mode
 

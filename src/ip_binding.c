@@ -188,7 +188,7 @@ static mcl_ip_status_t mcl_ip_translate_link_status(mcl_link_status_t st)
     case MCL_LINK_ERR_INVALID_ARGUMENT:
         return MCL_IP_ERR_INVALID_ARGUMENT;
     default:
-        /* Unknown class, reserved bits set, oversize payload, failed integrity. */
+        /* Unknown class, reserved bits set, oversize payload, failed frame check. */
         return MCL_IP_ERR_NONCANONICAL;
     }
 }
