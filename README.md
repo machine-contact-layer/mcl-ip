@@ -24,6 +24,25 @@ MCL-IP does not define:
 - application-specific APIs
 - MCL semantics
 
+
+## Implementation status
+
+The reference implementation is present, freestanding C99, with no allocation
+and no global mutable state. It contains **no network stack**: how bytes reach the
+medium is the integrator's decision. A binding describes a mapping; it does not
+become a network stack.
+
+Verified: builds under `/W4 /WX`, and the compiled object references no libc
+symbol (no `memcpy`, `memset`, `malloc`, or stdio), so it links on a
+freestanding target.
+
+- `include/mcl/ip_binding.h` — public API
+- `src/ip_binding.c` — implementation
+- `tests/test_ip_binding.c` — round trips and the negative cases
+
+**Status: Research Draft.** Nothing here is frozen. Assigned transport id
+`0x02` is provisional until Candidate Specification maturity.
+
 ## Status
 
 Private research repository. Pre-v0.1. See [`spec/binding-v0.md`](spec/binding-v0.md).
