@@ -84,7 +84,7 @@ static void make_presence(mcl_wire_tier0_t *obj)
     obj->priority = 2u;
     obj->source_ref = HOST_SOURCE_REF;
     obj->body.presence.machine_class = 7u;
-    obj->body.presence.capability_digest = 0x112233u;   /* 24-bit field */
+    obj->body.presence.capability_tag = 0x112233u;   /* 24-bit field */
     obj->body.presence.ttl = 60u;
 }
 
