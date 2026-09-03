@@ -213,6 +213,30 @@ mcl_ip_status_t mcl_ip_datagram_validate(
         /* A datagram boundary is a frame boundary. Trailing bytes are not ours. */
         return MCL_IP_ERR_NONCANONICAL;
     }
+    if ((frame.flags & MCL_LINK_FLAG_FRAME_CHECK) == 0u) {
+        /*
+         * The frame check is REQUIRED by this profile --
+         * spec/ip-datagram-profile-v1.md section 6.
+         *
+         * Link makes it optional because different carriages have different
+         * error characteristics, so the requirement belongs to the profile that
+         * knows its own. For IP datagrams it is required: the UDP checksum is
+         * optional over IPv4 and weak, and more importantly a frame that
+         * crossed a transport migration was checked by whatever carried it
+         * BEFORE, so the Link frame check is the only integrity that travels
+         * with the frame rather than with the medium.
+         *
+         * mcl_link_frame_decode verifies the CRC when the flag is set but does
+         * not require the flag. Without this, a frame carrying no check at all
+         * would be accepted here while a frame carrying a WRONG one was
+         * refused -- rewarding its omission.
+         *
+         * This is a CRC and detects accidental corruption only. It is not
+         * integrity in the security sense: anyone who can write to the medium
+         * can recompute it.
+         */
+        return MCL_IP_ERR_NONCANONICAL;
+    }
 
     return MCL_IP_OK;
 }

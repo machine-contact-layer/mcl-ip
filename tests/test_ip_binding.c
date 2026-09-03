@@ -33,7 +33,9 @@ static size_t build_frame(uint8_t *out, size_t capacity, uint16_t seq)
 
     memset(&f, 0, sizeof(f));
     f.frame_class = MCL_LINK_CLASS_DATA;
-    f.flags = MCL_LINK_FLAG_SEQUENCE;
+    /* The frame check is REQUIRED by the IP-DATAGRAM profile, section 6, so a
+     * frame built for this transport carries one. */
+    f.flags = MCL_LINK_FLAG_SEQUENCE | MCL_LINK_FLAG_FRAME_CHECK;
     f.source_ref = 0x0A0B0C0Du;
     f.sequence = seq;
     f.payload = k_presence;
@@ -228,6 +230,53 @@ static void test_datagram_boundary_is_frame_boundary(void)
           "a future Link major version is reported as unsupported");
     CHECK(mcl_ip_datagram_validate(NULL, frame_size) == MCL_IP_ERR_INVALID_ARGUMENT,
           "null datagram rejected");
+}
+
+/*
+ * The frame check is required by this profile, not merely verified when it
+ * happens to be present.
+ *
+ * Link makes it optional because different carriages have different error
+ * characteristics; the requirement belongs to the profile that knows its own.
+ * Without this, a datagram carrying NO check would be accepted while one
+ * carrying a WRONG check was refused -- rewarding its omission.
+ */
+static void test_frame_check_is_required_not_optional(void)
+{
+    mcl_link_frame_t f;
+    uint8_t frame[128];
+    uint8_t checked[128];
+    size_t written = 0u;
+    size_t checked_size;
+
+    printf("[TEST] the profile requires a frame check, not merely a valid one\n");
+
+    memset(&f, 0, sizeof(f));
+    f.frame_class = MCL_LINK_CLASS_DATA;
+    f.flags = MCL_LINK_FLAG_SEQUENCE;      /* deliberately no FRAME_CHECK */
+    f.source_ref = 0x0A0B0C0Du;
+    f.sequence = 11u;
+    f.payload = k_presence;
+    f.payload_len = (uint16_t)sizeof(k_presence);
+
+    CHECK(mcl_link_frame_encode(&f, frame, sizeof(frame), &written) ==
+              MCL_LINK_OK,
+          "a frame without a check is a legal LINK frame");
+    CHECK(mcl_ip_datagram_validate(frame, written) == MCL_IP_ERR_NONCANONICAL,
+          "but this profile refuses it");
+
+    /* The same frame with the check is accepted, so the refusal is about the
+     * missing check and not about anything else in the frame. */
+    checked_size = build_frame(checked, sizeof(checked), 11u);
+    CHECK(checked_size > 0u, "checked frame built");
+    CHECK(mcl_ip_datagram_validate(checked, checked_size) == MCL_IP_OK,
+          "the same frame with a check is accepted");
+
+    /* And a WRONG check is still refused, so requiring one did not replace
+     * verifying it. */
+    checked[checked_size - 1u] ^= 0x01u;
+    CHECK(mcl_ip_datagram_validate(checked, checked_size) != MCL_IP_OK,
+          "a corrupted frame check is still refused");
 }
 
 static void test_stream_round_trip_and_resync(void)
@@ -459,6 +508,7 @@ int main(void)
     test_endpoint_rejects_unknown_enums();
     test_endpoint_truncation();
     test_datagram_boundary_is_frame_boundary();
+    test_frame_check_is_required_not_optional();
     test_stream_round_trip_and_resync();
     test_stream_partial_reads();
     test_stream_skips_undecodable_frame();

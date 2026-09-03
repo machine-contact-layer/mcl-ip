@@ -1,48 +1,58 @@
 {
-  "registry_version": "0.1-draft",
-  "status": "provisional",
-  "transport_id": 2,
-  "transport_name": "MCL_IP",
-  "transport_registry": "mcl-link/registries/transport-ids-v0.1.json",
-  "purpose": "Assigned values for the 8-bit profile_id field as it appears in TRANSPORT_OFFER and TRANSPORT_ACCEPT for the IP binding. Profile identifiers are transport-scoped: profile 1 under IP and profile 1 under BLE are unrelated assignments and must never be compared.",
-  "allocation_policy": {
-    "0x00": "Reserved. Never assigned, so an uninitialised field names no profile.",
-    "0x01_0x3F": "MCL Standards Action",
-    "0x40_0xBF": "Specification Required",
-    "0xC0_0xEF": "Experimental Use",
-    "0xF0_0xFE": "Private Use",
-    "0xFF": "Reserved"
+ "registry_version": "0.1-draft",
+ "status": "provisional",
+ "transport_id": 2,
+ "transport_name": "MCL_IP",
+ "transport_registry": "mcl-link/registries/transport-ids-v0.1.json",
+ "purpose": "Assigned values for the 8-bit profile_id field as it appears in TRANSPORT_OFFER and TRANSPORT_ACCEPT for the IP binding. Profile identifiers are transport-scoped: profile 1 under IP and profile 1 under BLE are unrelated assignments and must never be compared.",
+ "allocation_policy": {
+  "0x00": "Reserved. Never assigned, so an uninitialised field names no profile.",
+  "0x01_0x3F": "MCL Standards Action",
+  "0x40_0xBF": "Specification Required",
+  "0xC0_0xEF": "Experimental Use",
+  "0xF0_0xFE": "Private Use",
+  "0xFF": "Reserved"
+ },
+ "profiles": [
+  {
+   "id": 0,
+   "name": "RESERVED",
+   "status": "reserved",
+   "detail": "Permanently reserved. An offer carrying profile_id 0 is malformed."
   },
-  "profiles": [
-    {
-      "id": 0,
-      "name": "RESERVED",
-      "status": "reserved",
-      "detail": "Permanently reserved. An offer carrying profile_id 0 is malformed."
-    },
-    {
-      "id": 192,
-      "name": "IP-X0-DATAGRAM-EXPERIMENTAL",
-      "status": "experimental",
-      "range": "Experimental Use",
-      "detail": "Datagram carriage where the datagram boundary IS the frame boundary: exactly one Link frame per datagram, trailing bytes refused rather than ignored. Rendezvous beacon in a discovery datagram to the provisional unregistered port 49913.",
-      "evidence": "mcl-ip/evidence/e4-udp-2g4-20260902/ demonstrated this carriage over 2.4 GHz between two machines, including eight deliberately malformed inputs that were refused. Transport evidence, not a conformance pass: no normative profile exists to conform to.",
-      "promotion_gate": "May be proposed for a Standards Action assignment once a second independent implementation has interoperated with it and the parameters are fixed by specification rather than by the reference implementation."
-    },
-    {
-      "id": 193,
-      "name": "IP-X1-STREAM-EXPERIMENTAL",
-      "status": "experimental",
-      "range": "Experimental Use",
-      "detail": "Length-prefixed stream carriage with a 2-byte prefix, bounded by the largest legal Link frame so an implausible declared length is refused rather than buffered. Preserves synchronisation across a frame it cannot decode, which is what lets a stream recover instead of resynchronising by luck.",
-      "evidence": "Unit-tested only. This profile has not been exercised over a real TCP connection between two machines.",
-      "promotion_gate": "As above, and requires over-air evidence first."
-    }
-  ],
-  "notes": [
-    "Experimental Use values were chosen deliberately over 1 and 2. These profiles are defined by reference-implementation behaviour rather than by specification, and an Experimental assignment says so in the value itself.",
-    "The underlying link technology is not part of the profile. Wi-Fi and Ethernet are the same IP profile; the transport identifier names a family, not a radio.",
-    "A profile_id says nothing about security. The security_claim field in an IP endpoint is a CLAIM by the offering peer, not a verified property.",
-    "An implementation receiving an unassigned profile_id MUST NOT guess. It refuses the offer and may continue on its current transport."
-  ]
+  {
+   "id": 192,
+   "name": "IP-X0-DATAGRAM-EXPERIMENTAL",
+   "status": "experimental",
+   "range": "Experimental Use",
+   "detail": "Datagram carriage where the datagram boundary IS the frame boundary: exactly one Link frame per datagram, trailing bytes refused rather than ignored. Rendezvous beacon in a discovery datagram to the provisional unregistered port 49913.",
+   "evidence": "mcl-ip/evidence/e4-udp-2g4-20260902/ demonstrated this carriage over 2.4 GHz between two machines, including eight deliberately malformed inputs that were refused. Transport evidence, not a conformance pass: no normative profile exists to conform to.",
+   "promotion_gate": "May be proposed for a Standards Action assignment once a second independent implementation has interoperated with it and the parameters are fixed by specification rather than by the reference implementation.",
+   "normative_specification": "mcl-ip/spec/ip-datagram-profile-v1.md",
+   "specification_status": "Candidate",
+   "promotion_sequence": [
+    "1. The normative specification above, complete, at Candidate. DONE.",
+    "2. An independent implementation written against that specification interoperates using this Experimental Use value.",
+    "3. That interoperability satisfies the promotion_gate below.",
+    "4. Standards Action assignment of the final Stable profile value.",
+    "5. C4/C5 re-run with the final assigned bytes -- profile_id travels inside TRANSPORT_OFFER and TRANSPORT_ACCEPT, so changing it changes the bytes that were tested. Evidence gathered under this value is evidence about this value."
+   ],
+   "must_not": "Relabel this experimental value as Stable. REGISTRY_POLICY.md is explicit that Experimental Use values are not globally interoperable assignments, and renaming one does not make it one."
+  },
+  {
+   "id": 193,
+   "name": "IP-X1-STREAM-EXPERIMENTAL",
+   "status": "experimental",
+   "range": "Experimental Use",
+   "detail": "Length-prefixed stream carriage with a 2-byte prefix, bounded by the largest legal Link frame so an implausible declared length is refused rather than buffered. Preserves synchronisation across a frame it cannot decode, which is what lets a stream recover instead of resynchronising by luck.",
+   "evidence": "Unit-tested only. This profile has not been exercised over a real TCP connection between two machines.",
+   "promotion_gate": "As above, and requires over-air evidence first."
+  }
+ ],
+ "notes": [
+  "Experimental Use values were chosen deliberately over 1 and 2. These profiles are defined by reference-implementation behaviour rather than by specification, and an Experimental assignment says so in the value itself.",
+  "The underlying link technology is not part of the profile. Wi-Fi and Ethernet are the same IP profile; the transport identifier names a family, not a radio.",
+  "A profile_id says nothing about security. The security_claim field in an IP endpoint is a CLAIM by the offering peer, not a verified property.",
+  "An implementation receiving an unassigned profile_id MUST NOT guess. It refuses the offer and may continue on its current transport."
+ ]
 }
