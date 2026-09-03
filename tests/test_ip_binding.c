@@ -396,6 +396,58 @@ static void test_argument_validation(void)
     CHECK(mcl_ip_endpoint_encoded_size(NULL) == 0u, "null has no size");
 }
 
+/*
+ * Endpoint rendezvous. The datagram carries the beacon and nothing else: the
+ * address the peer needs is the datagram's source address, which the receiver
+ * already holds. Repeating it in the payload would create a second copy that
+ * could disagree with the first, which is how NAT and multi-homing bugs start.
+ */
+static void test_rendezvous_datagram(void)
+{
+    uint8_t buf[MCL_IP_RENDEZVOUS_DATAGRAM_SIZE];
+    size_t written = 0u;
+    const uint8_t unrelated[4] = {0xDEu, 0xADu, 0xBEu, 0xEFu};
+
+    CHECK(mcl_ip_rendezvous_datagram_encode(0xA713224Fu, buf, sizeof(buf), &written)
+              == MCL_IP_OK, "rendezvous datagram encodes");
+    CHECK(written == MCL_IP_RENDEZVOUS_DATAGRAM_SIZE, "datagram size");
+    CHECK(mcl_ip_rendezvous_datagram_matches(buf, written, 0xA713224Fu) == 1u,
+          "own beacon matches");
+
+    /* A beacon for some other machine's migration. */
+    CHECK(mcl_ip_rendezvous_datagram_matches(buf, written, 0xA7132250u) == 0u,
+          "another token does not match");
+
+    /*
+     * A socket bound to a broadcast port receives unrelated traffic as a matter
+     * of course. That must be "not ours", never an error.
+     */
+    CHECK(mcl_ip_rendezvous_datagram_matches(unrelated, sizeof(unrelated), 0xA713224Fu) == 0u,
+          "unrelated datagram does not match");
+    CHECK(mcl_ip_rendezvous_datagram_matches(NULL, 0u, 0xA713224Fu) == 0u,
+          "null datagram does not match");
+
+    /* A BLE beacon arriving on an IP socket is detectably wrong rather than
+     * silently accepted, which is why the beacon carries its transport. */
+    {
+        uint8_t ble_beacon[MCL_RENDEZVOUS_BEACON_SIZE];
+        size_t n = 0u;
+        CHECK(mcl_rendezvous_beacon_encode(0x03u, 0xA713224Fu, ble_beacon,
+                                           sizeof(ble_beacon), &n) == MCL_LINK_OK,
+              "BLE beacon encodes");
+        CHECK(mcl_ip_rendezvous_datagram_matches(ble_beacon, n, 0xA713224Fu) == 0u,
+              "a BLE beacon is not an IP beacon");
+    }
+
+    CHECK(mcl_ip_rendezvous_datagram_encode(0u, buf, sizeof(buf), &written)
+              == MCL_IP_ERR_INVALID_ARGUMENT, "token zero refused");
+    CHECK(mcl_ip_rendezvous_datagram_encode(0xA713224Fu, buf, 2u, &written)
+              == MCL_IP_ERR_RANGE, "short buffer refused");
+
+    /* The port is unregistered and provisional; pinned so a change is deliberate. */
+    CHECK(MCL_IP_RENDEZVOUS_PORT == 49913u, "provisional rendezvous port");
+}
+
 int main(void)
 {
     printf("MCL-IP binding v0 tests\n");
@@ -412,6 +464,7 @@ int main(void)
     test_stream_skips_undecodable_frame();
     test_mtu();
     test_argument_validation();
+    test_rendezvous_datagram();
 
     printf("\n%d checks, %d failed\n", tests_run, tests_failed);
     return (tests_failed == 0) ? 0 : 1;

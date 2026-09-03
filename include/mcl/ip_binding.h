@@ -4,6 +4,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "mcl/rendezvous.h"  /* the beacon this binding places in a discovery datagram */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -153,6 +155,56 @@ mcl_ip_status_t mcl_ip_datagram_validate(
  * stream synchronisation, which is the difference between dropping one frame
  * and dropping the connection.
  */
+/* ---------- Endpoint rendezvous ----------
+ *
+ * Where the transport-neutral rendezvous beacon (mcl-link/rendezvous.h) is
+ * placed for IP: the payload of a discovery datagram sent to a link-local
+ * destination, so a peer learns the concrete address from the datagram's own
+ * source address rather than from anything carried in the offer.
+ *
+ * The offer therefore never has to contain an IP address, which keeps it small
+ * on the first-contact medium and avoids announcing a machine's network
+ * topology to everyone in earshot.
+ *
+ * PORT. 49913 is in the dynamic/private range and is NOT registered with IANA.
+ * It is provisional and this project holds no assignment. A deployment that
+ * needs a stable well-known port must register one; squatting on an assigned
+ * port would collide with its owner, and claiming registration we do not have
+ * would be worse than admitting we have none.
+ *
+ * DESTINATION. The binding does not mandate one, because the right choice
+ * differs by deployment: IPv4 subnet broadcast, IPv6 link-local multicast, or a
+ * SoftAP's broadcast address are all reasonable and none is portable to the
+ * others. What must be agreed is the port and the payload, which is what is
+ * defined here.
+ */
+#define MCL_IP_RENDEZVOUS_PORT 49913u
+#define MCL_IP_RENDEZVOUS_DATAGRAM_SIZE MCL_RENDEZVOUS_BEACON_SIZE
+
+/*
+ * Build the discovery datagram payload advertising `endpoint_token`.
+ *
+ * The datagram carries the beacon and nothing else. The address the peer needs
+ * is the datagram's source address, which the receiver already has from its
+ * socket; repeating it in the payload would add a second copy that could
+ * disagree with the first, which is how NAT and multi-homing bugs begin.
+ */
+mcl_ip_status_t mcl_ip_rendezvous_datagram_encode(
+    uint32_t endpoint_token,
+    uint8_t *out,
+    size_t out_capacity,
+    size_t *written);
+
+/*
+ * Receive side: does this datagram payload advertise `expected_token`?
+ * Returns 0 for anything else, including malformed input, because a socket
+ * bound to a broadcast port receives unrelated traffic as a matter of course.
+ */
+uint8_t mcl_ip_rendezvous_datagram_matches(
+    const uint8_t *data,
+    size_t size,
+    uint32_t expected_token);
+
 #define MCL_IP_STREAM_PREFIX_SIZE 2u
 
 mcl_ip_status_t mcl_ip_stream_wrap(

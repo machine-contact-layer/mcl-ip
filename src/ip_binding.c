@@ -316,3 +316,40 @@ size_t mcl_ip_max_frame_for_mtu(
 
     return path_mtu - overhead;
 }
+
+/* ---------- Endpoint rendezvous ---------- */
+
+mcl_ip_status_t mcl_ip_rendezvous_datagram_encode(
+    uint32_t endpoint_token,
+    uint8_t *out,
+    size_t out_capacity,
+    size_t *written)
+{
+    size_t beacon_written = 0u;
+    mcl_link_status_t lst;
+
+    if (out == NULL || written == NULL) {
+        return MCL_IP_ERR_INVALID_ARGUMENT;
+    }
+
+    lst = mcl_rendezvous_beacon_encode(
+        MCL_IP_TRANSPORT_ID, endpoint_token, out, out_capacity, &beacon_written);
+    if (lst == MCL_LINK_ERR_INVALID_ARGUMENT) {
+        return MCL_IP_ERR_INVALID_ARGUMENT;
+    }
+    if (lst != MCL_LINK_OK) {
+        return MCL_IP_ERR_RANGE;
+    }
+
+    *written = beacon_written;
+    return MCL_IP_OK;
+}
+
+uint8_t mcl_ip_rendezvous_datagram_matches(
+    const uint8_t *data,
+    size_t size,
+    uint32_t expected_token)
+{
+    return mcl_rendezvous_beacon_matches(
+        data, size, MCL_IP_TRANSPORT_ID, expected_token);
+}
