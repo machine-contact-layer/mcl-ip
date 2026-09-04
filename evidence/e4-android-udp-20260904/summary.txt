@@ -1,0 +1,7 @@
+MCL-IP over-air campaign against an Android handset
+run 20260904
+
+  phone-responds-major0        exit=0  31 checks, 0 failed, 0 datagram retries
+  phone-responds-major1        exit=0  40 checks, 0 failed, 0 datagram retries
+  phone-initiates-major0       exit=0  31 checks, 0 failed, 0 datagram retries
+  phone-initiates-major1       exit=0  40 checks, 0 failed, 0 datagram retries

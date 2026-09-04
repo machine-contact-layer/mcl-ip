@@ -1,0 +1,21 @@
+﻿MCL-IP over-air peer
+====================
+peer=10.13.97.149:5572 bind=10.13.97.34 major=0 frame_max=1048
+
+  [+] valid CONTACT carrying PRESENCE
+  [+] valid DATA carrying HAZARD at P0
+  [+] KEEPALIVE with no payload
+  [-] truncated: last byte removed
+  [-] trailing byte after a complete frame
+  [-] unknown frame class
+  [-] reserved flag bit set
+  [-] future Link major version
+  [-] integrity field corrupted by one bit
+  [-] payload corrupted by one bit under a valid CRC field
+  [-] declared payload length exceeds the datagram
+  [-] a frame carrying no frame check, which this profile requires
+  [-] no frame check refused by the profile
+  [=] sustained exchange of 100 frames
+      acked=100 lost=0 of 100
+
+31 checks, 0 failed, 0 datagram retries

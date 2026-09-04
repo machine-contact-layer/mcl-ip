@@ -40,12 +40,28 @@ freestanding target.
 - `src/ip_binding.c` — implementation
 - `tests/test_ip_binding.c` — round trips and the negative cases
 
-**Status: Research Draft.** Nothing here is frozen. Assigned transport id
-`0x02` is provisional until Candidate Specification maturity.
-
 ## Status
 
-Private research repository. Pre-v0.1. See [`spec/binding-v0.md`](spec/binding-v0.md).
+**Not one status. Two, and they are deliberately different.**
+
+| | Status |
+|---|---|
+| `transport_id = 2` (`MCL_IP`) | **Stable.** MCL Standards Action, 2026-09-04. Frozen; the record is in [`mcl-link/registries/transport-ids-v0.1.json`](../mcl-link/registries/transport-ids-v0.1.json). |
+| [`spec/ip-datagram-profile-v1.md`](spec/ip-datagram-profile-v1.md) — `profile_id = 1` | **Stable.** MCL Standards Action, 2026-09-04. One Link frame per datagram; the datagram boundary is the frame boundary. |
+| [`spec/binding-v0.md`](spec/binding-v0.md) | **Research Draft.** The wider binding — stream carriage, endpoint negotiation, MTU behaviour — is not frozen and is not a basis for an implementation. |
+| `profile_id = 192` | **Experimental Use, permanently.** It was never relabelled: profile 1 is a separate assignment. Evidence gathered under 192 stays evidence about 192. |
+
+So: the datagram profile is safe to build against and the rest of this
+repository is not. If you need a single sentence — **what v1.0 freezes here is
+one profile under one transport identifier, and nothing else.**
+
+There is **no registered MCL UDP port.** Discovery is not part of Stable IP:
+the endpoint arrives in a `TRANSPORT_OFFER`. Port 49913 appears in this
+repository as an experimental reference-harness default and is not an
+assignment.
+
+The reference implementation is C99, freestanding, and contains **no network
+stack**, so nothing here opens a socket for you.
 
 ### Evidence
 
@@ -58,6 +74,18 @@ The eight refusals are the result that matters: truncation, a trailing byte, an
 unknown class, a reserved bit, a future major version, a corrupted frame check,
 a corrupted payload and an overstated length were each refused with the status
 the specification requires.
+
+**`E4 MULTI_DEVICE_OVER_AIR`** — 2026-09-04. A commodity Android 14 handset
+(arm64-v8a) as a third IP peer over its own 2.4 GHz SoftAP, in both directions
+and at both Wire/Link majors. 142 checks, 0 failed; 400 sustained frames, 0
+lost, 0 retries. Full record and limits in
+[`evidence/e4-android-udp-20260904/`](evidence/e4-android-udp-20260904/); harness
+in [`hardware/android-udp-peer/`](hardware/android-udp-peer/).
+
+That run exercised the **Stable** path end to end: major-1 Link frames carrying
+a major-1 `PRESENCE` and a `TRANSPORT_OFFER` on `profile_id` 1, and refusals of
+reserved `profile_id` 0, reserved `transport_id` 0, and a Candidate object
+offered at the Stable major.
 
 **Not** independent interoperability. Both ends compile the same sources, so a
 shared misreading of the specification would pass on both sides.

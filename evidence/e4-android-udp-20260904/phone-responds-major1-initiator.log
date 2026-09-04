@@ -1,0 +1,26 @@
+﻿MCL-IP over-air peer
+====================
+peer=10.13.97.34:5571 bind=10.13.97.149 major=1 frame_max=1048
+
+  [+] valid CONTACT carrying PRESENCE
+  [+] KEEPALIVE with no payload
+  [+] major-1 CONTACT carrying TRANSPORT_OFFER, BLE profile 1
+  [-] truncated: last byte removed
+  [-] trailing byte after a complete frame
+  [-] unknown frame class
+  [-] reserved flag bit set
+  [-] future Link major version
+  [-] integrity field corrupted by one bit
+  [-] payload corrupted by one bit under a valid CRC field
+  [-] declared payload length exceeds the datagram
+  [-] a frame carrying no frame check, which this profile requires
+  [-] no frame check refused by the profile
+  [-] TRANSPORT_OFFER carrying reserved profile_id 0
+  [-] reserved profile_id 0 refused by the peer
+  [-] TRANSPORT_OFFER carrying reserved transport_id 0
+  [-] reserved transport_id 0 refused by the peer
+  [-] HAZARD, a Candidate object, offered at the Stable major
+  [=] sustained exchange of 100 frames
+      acked=100 lost=0 of 100
+
+40 checks, 0 failed, 0 datagram retries

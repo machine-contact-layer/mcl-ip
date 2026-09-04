@@ -1,0 +1,14 @@
+DEVICE UNDER TEST
+
+  ro.product.manufacturer            vivo
+  ro.product.model                   I2017
+  ro.build.version.release           14
+  ro.build.version.sdk               34
+  ro.build.version.security_patch    2025-04-01
+  ro.product.cpu.abi                 arm64-v8a
+  ro.soc.model                       SM8350
+  ro.build.display.id                PD2136F_EX_A_39.14.3
+  kernel                             Linux 5.4.281-qgki-ga26c197bb35b
+  selinux                            Enforcing
+  phone address                      10.13.97.34
+  laptop address                     10.13.97.149

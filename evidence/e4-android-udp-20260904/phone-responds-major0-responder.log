@@ -1,0 +1,116 @@
+MCL-IP over-air responder
+=========================
+bind=0.0.0.0 port=5570 major=0 source_ref=A4D01DEE frame_max=1048
+MCLIP READY
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=1 kind=0 ACCEPT
+MCLIP RX n=29 cls=3 lmaj=0 src=C0FFEE01 seq=2 kind=1 ACCEPT
+MCLIP RX n=12 cls=6 lmaj=0 src=C0FFEE01 seq=0 ACCEPT nosem
+MCLIP RX n=24 REJECT ip=TRUNCATED
+MCLIP RX n=26 REJECT ip=NONCANONICAL
+MCLIP RX n=25 REJECT ip=NONCANONICAL
+MCLIP RX n=25 REJECT ip=NONCANONICAL
+MCLIP RX n=25 REJECT ip=NONCANONICAL
+MCLIP RX n=25 REJECT ip=NONCANONICAL
+MCLIP RX n=25 REJECT ip=NONCANONICAL
+MCLIP RX n=25 REJECT ip=NONCANONICAL
+MCLIP RX n=8 REJECT ip=NONCANONICAL
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=100 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=101 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=102 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=103 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=104 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=105 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=106 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=107 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=108 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=109 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=110 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=111 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=112 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=113 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=114 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=115 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=116 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=117 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=118 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=119 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=120 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=121 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=122 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=123 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=124 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=125 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=126 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=127 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=128 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=129 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=130 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=131 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=132 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=133 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=134 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=135 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=136 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=137 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=138 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=139 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=140 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=141 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=142 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=143 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=144 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=145 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=146 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=147 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=148 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=149 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=150 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=151 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=152 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=153 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=154 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=155 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=156 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=157 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=158 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=159 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=160 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=161 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=162 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=163 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=164 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=165 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=166 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=167 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=168 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=169 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=170 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=171 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=172 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=173 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=174 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=175 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=176 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=177 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=178 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=179 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=180 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=181 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=182 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=183 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=184 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=185 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=186 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=187 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=188 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=189 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=190 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=191 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=192 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=193 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=194 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=195 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=196 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=197 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=198 kind=0 ACCEPT
+MCLIP RX n=25 cls=0 lmaj=0 src=C0FFEE01 seq=199 kind=0 ACCEPT

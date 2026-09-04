@@ -62,4 +62,24 @@ if(MCL_IP_BUILD_TOOLS)
     if(WIN32)
         target_link_libraries(mcl_ip_udp_over_air_peer PRIVATE ws2_32)
     endif()
+
+    # The responding half. It exists so that the peer answering an over-air run
+    # does not have to be the ESP32 sketch: any machine with a socket can be it,
+    # which is what makes an Android or second-laptop peer possible at all.
+    # contact.c is linked here and not into mcl_ip: the binding does not own
+    # contact state and must not start doing so. The responder needs it because
+    # it judges a TRANSPORT_OFFER with the library's rule rather than its own.
+    add_executable(mcl_ip_udp_over_air_responder
+        tools/udp_over_air_responder.c
+        "${MCL_WIRE_DIR}/src/wire.c"
+        "${MCL_LINK_DIR}/src/contact.c")
+    target_link_libraries(mcl_ip_udp_over_air_responder PRIVATE mcl_ip)
+    target_include_directories(mcl_ip_udp_over_air_responder PRIVATE "${MCL_WIRE_DIR}/include")
+    set_target_properties(mcl_ip_udp_over_air_responder PROPERTIES
+        C_STANDARD 99
+        C_STANDARD_REQUIRED YES
+        C_EXTENSIONS NO)
+    if(WIN32)
+        target_link_libraries(mcl_ip_udp_over_air_responder PRIVATE ws2_32)
+    endif()
 endif()
