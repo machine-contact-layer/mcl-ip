@@ -225,9 +225,38 @@ static void test_datagram_boundary_is_frame_boundary(void)
           "unknown frame class is non-canonical, not truncated");
 
     memcpy(padded, frame, frame_size);
-    padded[0] = (uint8_t)((1u << 4u) | (padded[0] & 0x0Fu));
+    /* Major 2, not 1. Link major 1 is CUT and is accepted now, so this case
+     * has to name a major that is genuinely unassigned or it stops testing
+     * anything. */
+    padded[0] = (uint8_t)((2u << 4u) | (padded[0] & 0x0Fu));
     CHECK(mcl_ip_datagram_validate(padded, frame_size) == MCL_IP_ERR_UNSUPPORTED,
-          "a future Link major version is reported as unsupported");
+          "an unassigned Link major is reported as unsupported");
+
+    /*
+     * And the Stable major IS carried. Built properly rather than by rewriting
+     * the nibble: the frame check covers the version byte, so a rewritten
+     * major fails the CRC and would be refused for the wrong reason -- which
+     * would make this look like a passing test of something it never touched.
+     */
+    {
+        mcl_link_frame_t f;
+        uint8_t stable[128];
+        size_t stable_size = 0u;
+
+        memset(&f, 0, sizeof(f));
+        f.frame_class = MCL_LINK_CLASS_DATA;
+        f.flags = MCL_LINK_FLAG_SEQUENCE | MCL_LINK_FLAG_FRAME_CHECK;
+        f.source_ref = 0x0A0B0C0Du;
+        f.sequence = 9u;
+        f.payload = k_presence;
+        f.payload_len = (uint16_t)sizeof(k_presence);
+        CHECK(mcl_link_frame_encode_at_major(MCL_LINK_STABLE_MAJOR, &f, stable,
+                                             sizeof(stable), &stable_size)
+                  == MCL_LINK_OK,
+              "a Stable-major frame encodes");
+        CHECK(mcl_ip_datagram_validate(stable, stable_size) == MCL_IP_OK,
+              "and this binding carries it");
+    }
     CHECK(mcl_ip_datagram_validate(NULL, frame_size) == MCL_IP_ERR_INVALID_ARGUMENT,
           "null datagram rejected");
 }
