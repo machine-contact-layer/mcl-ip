@@ -34,7 +34,7 @@ param(
     [string]$WindowsBin,                   # dir holding the MSVC-built tools
     [int]$Count = 100,
     [int]$BasePort = 5555,
-    [string]$Adb = 'C:\Users\marsm\rdb\adb.exe',
+    [string]$Adb = 'adb',
     [string]$EvidenceRoot = ''
 )
 
@@ -45,7 +45,16 @@ foreach ($n in @('PeerIp', 'BindIp', 'WindowsBin')) {
         throw "-$n is required. Run 'ipconfig' and 'adb shell ip -o -4 addr' to find both addresses."
     }
 }
-if (-not (Test-Path -LiteralPath $Adb)) { throw "adb not found at $Adb" }
+# Resolved rather than hardcoded. A path with a username in it is both a
+# disclosure and a lie on anybody else's machine, and check-publication-readiness.sh
+# treats one in a tracked script as fatal.
+$adbCmd = Get-Command $Adb -ErrorAction SilentlyContinue
+if ($null -eq $adbCmd) {
+    if (Test-Path -LiteralPath $Adb) { $Adb = (Resolve-Path $Adb).Path }
+    else { throw "adb not found. Put it on PATH or pass -Adb <path to adb.exe>." }
+} else {
+    $Adb = $adbCmd.Source
+}
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $outDir    = Join-Path $scriptDir 'build\out'
