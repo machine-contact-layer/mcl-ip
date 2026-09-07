@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "mcl/rendezvous.h"  /* the beacon this binding places in a discovery datagram */
+#include "mcl/endpoint_rendezvous.h"  /* the beacon this binding places in a discovery datagram */
 
 #ifdef __cplusplus
 extern "C" {

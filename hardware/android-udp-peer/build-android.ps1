@@ -59,14 +59,14 @@ New-Item -ItemType Directory -Force -Path $outDir | Out-Null
 $headers = @(
     (Join-Path $LinkDir 'include\mcl\link.h'),
     (Join-Path $LinkDir 'include\mcl\contact.h'),
-    (Join-Path $LinkDir 'include\mcl\rendezvous.h'),
+    (Join-Path $LinkDir 'include\mcl\endpoint_rendezvous.h'),
     (Join-Path $WireDir 'include\mcl\wire.h'),
     (Join-Path $ipRoot  'include\mcl\ip_binding.h')
 )
 $sources = @(
     (Join-Path $LinkDir 'src\link.c'),
     (Join-Path $LinkDir 'src\contact.c'),
-    (Join-Path $LinkDir 'src\rendezvous.c'),
+    (Join-Path $LinkDir 'src\endpoint_rendezvous.c'),
     (Join-Path $WireDir 'src\wire.c'),
     (Join-Path $ipRoot  'src\ip_binding.c'),
     (Join-Path $ipRoot  'tools\udp_over_air_peer.c'),
@@ -114,9 +114,9 @@ command -v aarch64-linux-gnu-gcc >/dev/null || {
 }
 cd '$wslStaging'
 aarch64-linux-gnu-gcc $common -o '$wslOut/mcl_ip_peer_arm64' \
-    src/udp_over_air_peer.c src/link.c src/rendezvous.c src/wire.c src/ip_binding.c
+    src/udp_over_air_peer.c src/link.c src/endpoint_rendezvous.c src/wire.c src/ip_binding.c
 aarch64-linux-gnu-gcc $common -o '$wslOut/mcl_ip_responder_arm64' \
-    src/udp_over_air_responder.c src/link.c src/contact.c src/rendezvous.c src/wire.c src/ip_binding.c
+    src/udp_over_air_responder.c src/link.c src/contact.c src/endpoint_rendezvous.c src/wire.c src/ip_binding.c
 aarch64-linux-gnu-strip '$wslOut/mcl_ip_peer_arm64' '$wslOut/mcl_ip_responder_arm64'
 file '$wslOut/mcl_ip_peer_arm64'
 file '$wslOut/mcl_ip_responder_arm64'

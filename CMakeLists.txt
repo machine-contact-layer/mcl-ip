@@ -19,7 +19,7 @@ endif()
 add_library(mcl_ip STATIC
     src/ip_binding.c
     "${MCL_LINK_DIR}/src/link.c"
-    "${MCL_LINK_DIR}/src/rendezvous.c")
+    "${MCL_LINK_DIR}/src/endpoint_rendezvous.c")
 target_include_directories(mcl_ip PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     "${MCL_LINK_DIR}/include")
