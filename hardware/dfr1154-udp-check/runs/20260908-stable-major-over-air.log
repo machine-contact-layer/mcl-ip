@@ -1,0 +1,70 @@
+MCL-IP carriage, DFR1154 autonomous node <-> independent Python implementation
+2026-09-08
+
+RIG
+  node       DFR1154 (FireBeetle 2 ESP32-S3), scenario 3, SoftAP mcl-auto-node
+             firmware sha256 76E21D1CD3F4370C4D11997CDE4359F079D3D63EADCBDB1B031D251D4ED30DFA
+  host       Windows laptop, Realtek RTL8188EU USB adapter ("Wi-Fi 2"), the
+             project adapter. The internal MediaTek adapter carries the
+             internet and was not touched.
+  path       2.4 GHz, 192.168.4.2 -> 192.168.4.1:47100, RTT ~3 ms
+  frames     built and checked by mcl-core/conformance/independent/
+             mcl_independent.py -- no shared source, language or build system
+             with the reference C running on the board
+
+HOST SIDE
+
+  MCL-IP check against 192.168.4.1:47100
+  frames built by the independent Python implementation
+
+    PRESENCE in a DATA frame at the Stable Link major ok (18 bytes, class 3, major 1)
+    Stable major with a frame check                ok (22 bytes, class 3, major 1)
+    PRESENCE in a DATA frame, no options           ok (18 bytes, class 3, major 0)
+    with a frame check                             ok (22 bytes, class 3, major 0)
+    with session and sequence                      ok (24 bytes, class 3, major 0)
+    truncated frame is refused                     ok (no reply)
+    empty datagram is refused                      ok (no reply)
+    garbage is refused                             ok (no reply)
+    an unimplemented Link major is refused         ok (no reply)
+
+  9 of 9
+
+NODE SIDE
+
+  MCLAUTO LOG 63 udp responder on 192.168.4.1:47100
+  MCLAUTO LOG 22661 udp frame class=3 major=1 payload=10 from 192.168.4.2
+  MCLAUTO LOG 22665 udp frame class=3 major=1 payload=10 from 192.168.4.2
+  MCLAUTO LOG 22669 udp frame class=3 major=0 payload=10 from 192.168.4.2
+  MCLAUTO LOG 22673 udp frame class=3 major=0 payload=10 from 192.168.4.2
+  MCLAUTO LOG 22677 udp frame class=3 major=0 payload=10 from 192.168.4.2
+  MCLAUTO LOG 22681 udp 4 bytes refused rc=8
+  MCLAUTO LOG 26709 udp 32 bytes refused rc=2
+  MCLAUTO LOG 28712 udp 18 bytes refused rc=3
+  MCLAUTO LOG END held=13 dropped=0
+
+  MCLAUTO RESULT state=RUNNING phase=QUIESCE zero_prior=true recovered=5
+                 log_dropped=0
+  MCLAUTO VALUE own_source_ref=1804657767 provenance=LOCAL
+  MCLAUTO VALUE peer_ip=33859776 provenance=FROM_BEARER
+
+  The three refusals carry DIFFERENT reason codes -- 8, 2 and 3 -- rather than
+  one generic rejection. A responder that answered every malformed datagram
+  identically would be indistinguishable from one that was not parsing.
+
+WHAT THIS ESTABLISHES
+
+  Stable IP-DATAGRAM carriage on the autonomous board, over a real radio,
+  against an implementation independent of the reference code, INCLUDING Link
+  major 1 -- which until 2026-09-08 no independent implementation had ever
+  decoded, because link-v0.md's layout section still said "link_major is 0 for
+  this draft" and the clean-room implementation was written from that sentence.
+
+  The run is zero-prior: the node was told nothing about the peer and learned
+  its address from the datagram that arrived (provenance FROM_BEARER). The
+  node's own port is harness configuration and is recorded as such.
+
+WHAT IT DOES NOT ESTABLISH
+
+  Stranger discovery over IP. MCL defines no global discovery port and this rig
+  does not invent one. Nor E6: the Python was written by the same author, from
+  the same documents, as the C.
