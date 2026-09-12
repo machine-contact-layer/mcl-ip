@@ -1,6 +1,46 @@
-# MCL-IP
+<p align="center">
+  <img src=".github/banner.png" alt="OJOBIT" width="100%">
+</p>
 
-`mcl-ip` defines an optional IP/network binding for the Machine Contact Layer.
+<h1 align="center">MCL-IP</h1>
+
+<p align="center"><strong>MCL over the network you already have — UDP, TCP, or anything that moves a datagram.</strong></p>
+
+<p align="center">
+  <a href="https://github.com/machine-contact-layer/mcl-ip/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/machine-contact-layer/mcl-ip/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://github.com/machine-contact-layer/mcl-ip/blob/main/LICENSE"><img alt="License Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-blue"></a>
+  <img alt="profile" src="https://img.shields.io/badge/IP--DATAGRAM%20profile%201-Stable-brightgreen">
+  <img alt="evidence" src="https://img.shields.io/badge/over--air-E4-brightgreen">
+</p>
+
+<p align="center">
+  <a href="https://github.com/machine-contact-layer/mcl-sdk"><b>Use the SDK instead</b></a> ·
+  <a href="https://github.com/machine-contact-layer/mcl-core"><b>Specifications</b></a> ·
+  <a href="https://github.com/machine-contact-layer/mcl-link"><b>mcl-link</b></a>
+</p>
+
+---
+
+> ### Most people should start with the SDK, not here
+>
+> This repository is a **specification**. If you are building a product, you
+> want [**mcl-sdk**](https://github.com/machine-contact-layer/mcl-sdk) — one CMake project, no sibling checkout, and a
+> working example you can run in about a minute. Come back here when you need
+> to know exactly what a byte means, or when you are writing an independent
+> implementation.
+
+## Why this exists
+
+MCL is not anti-network. When two machines can already reach each other over
+IP, that is usually the right place for the contact to live — and this binding
+is also the most common destination when a contact migrates off a slower
+bootstrap medium.
+
+If your machines are on the same network today, this plus
+[`MCL Base 1`](https://github.com/machine-contact-layer/mcl-sdk) is all you need; nothing here requires discovery,
+a microphone, or a rendezvous step.
+
+**IP-DATAGRAM profile 1 is Stable.**
 
 MCL is not anti-network. IP is a richer transport that peers may use directly or negotiate after first contact over another binding such as MCL-AP.
 
